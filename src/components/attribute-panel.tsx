@@ -43,12 +43,13 @@ export default function AttributePanel({
       <div>
         {ATTRIBUTE_LIST.map((attribute) => {
           const attributeValue = character[`${attribute}`];
-
+          const mod = Math.floor((attributeValue - 10) / 2);
           return (
-            <div key={attribute}>
+            <div key={attribute} style={{ display: "flex", gap: "4px" }}>
               <span>
                 {attribute}: {attributeValue}
               </span>
+              <span>Modifier: {mod}</span>
               {!readOnly && (
                 <>
                   <button onClick={() => increAttribute(attribute)}>+</button>
