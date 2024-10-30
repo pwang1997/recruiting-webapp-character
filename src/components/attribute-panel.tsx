@@ -4,11 +4,13 @@ import { ATTRIBUTE_LIST } from "../consts";
 
 interface AttributePanelProps {
   character: Attributes;
-  setCharacter: React.Dispatch<React.SetStateAction<Attributes>>;
+  setCharacter?: React.Dispatch<React.SetStateAction<Attributes>>;
+  readOnly?: boolean;
 }
 export default function AttributePanel({
   character,
   setCharacter,
+  readOnly = false,
 }: AttributePanelProps) {
   const increAttribute = useCallback(
     (attribute: string) => {
@@ -47,13 +49,17 @@ export default function AttributePanel({
               <span>
                 {attribute}: {attributeValue}
               </span>
-              <button onClick={() => increAttribute(attribute)}>+</button>
-              <button onClick={() => decrAttribute(attribute)}>-</button>
+              {!readOnly && (
+                <>
+                  <button onClick={() => increAttribute(attribute)}>+</button>
+                  <button onClick={() => decrAttribute(attribute)}>-</button>
+                </>
+              )}
             </div>
           );
         })}
       </div>
     );
-  }, [character, decrAttribute, increAttribute]);
+  }, [character, decrAttribute, increAttribute, readOnly]);
   return <div>{renderAttributes()}</div>;
 }

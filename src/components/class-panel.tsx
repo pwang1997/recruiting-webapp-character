@@ -1,12 +1,29 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ATTRIBUTE_LIST, CLASS_LIST } from "../consts";
-import { Attributes } from "../types";
+import { Attributes, Class } from "../types";
+import AttributePanel from "./attribute-panel";
 
 interface ClassPanelProps {
   character: Attributes;
 }
 
 export default function ClassPanel({ character }: ClassPanelProps) {
+  const [selectedClazz, setSelectedClazz] = useState<Class[]>([]);
+
+  const toggleSelectedClazz = useCallback(
+    (clazz: Class) => {
+      if (selectedClazz.includes(clazz)) {
+        setSelectedClazz((prev) => {
+          return prev.filter((item) => item !== clazz);
+        });
+      } else {
+        setSelectedClazz((prev) => {
+          return [...prev, clazz];
+        });
+      }
+    },
+    [selectedClazz]
+  );
   const renderClasses = useCallback(() => {
     return (
       <div>
@@ -17,13 +34,24 @@ export default function ClassPanel({ character }: ClassPanelProps) {
               (attr) => character[`${attr}`] < clazzItem[`${attr}`]
             ).length === 0;
           return (
-            <div key={clazz}>
+            <div
+              key={clazz}
+              onClick={() => toggleSelectedClazz(clazz as Class)}
+              style={{ borderStyle: "dashed", padding: "8px" }}
+            >
               <span className={attributesMet ? "success" : ""}>{clazz}</span>
+              <div
+                className={
+                  selectedClazz.includes(clazz as Class) ? "show" : "hidden"
+                }
+              >
+                <AttributePanel character={clazzItem} readOnly />
+              </div>
             </div>
           );
         })}
       </div>
     );
-  }, [character]);
+  }, [character, selectedClazz, toggleSelectedClazz]);
   return <div>{renderClasses()}</div>;
 }
