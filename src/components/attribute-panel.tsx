@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Attributes } from "../types";
 import { ATTRIBUTE_LIST } from "../consts";
 
@@ -12,15 +12,23 @@ export default function AttributePanel({
   setCharacter,
   readOnly = false,
 }: AttributePanelProps) {
+  const attributesCount = useMemo(
+    () => Object.values(character).reduce((prev, cur) => prev + cur, 0),
+    [character]
+  );
   const increAttribute = useCallback(
     (attribute: string) => {
-      setCharacter((prev) => {
-        const curState = { ...prev };
-        curState[`${attribute}`] += 1;
-        return curState;
-      });
+      if (attributesCount === 70) {
+        alert("You can allocate at most 70 attribute points!");
+      } else {
+        setCharacter((prev) => {
+          const curState = { ...prev };
+          curState[`${attribute}`] += 1;
+          return curState;
+        });
+      }
     },
-    [setCharacter]
+    [attributesCount, setCharacter]
   );
 
   const decrAttribute = useCallback(
