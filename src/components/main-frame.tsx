@@ -1,25 +1,44 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import CreateCharacterPanel from "./create-character-panel";
 import { Attributes } from "../types";
-import { DEFAULT_CHARACTER } from "../characterConsts";
-import AttributePanel from "./attribute-panel";
-import ClassPanel from "./class-panel";
-import SkillPanel from "./skill-panel";
+import { getUrl } from "../apis";
 
 export default function MainFrame() {
-  const [character, setCharacter] = useState<Attributes>(DEFAULT_CHARACTER);
+  const [panels, setPanels] = useState<JSX.Element[]>([
+    <CreateCharacterPanel />,
+  ]);
+
+  const addPanel = useCallback((characterTemplate?: Attributes) => {
+    setPanels((prev) => {
+      return [
+        ...prev,
+        <CreateCharacterPanel characterTemplate={characterTemplate} />,
+      ];
+    });
+  }, []);
+
+  const getCharacter = useCallback(() => {
+    fetch(getUrl)
+      .then(async (res) => {
+        const data = await res.json();
+
+        const body = data.body;
+        addPanel(body);
+        alert("Character Retrieved!");
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, [addPanel]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+    <div>
+      <button onClick={() => addPanel()}>Create Character</button>
+      <button onClick={() => getCharacter()}>Get Last Saved Character</button>
       <div>
-        <AttributePanel character={character} setCharacter={setCharacter} />
-      </div>
-
-      <div>
-        <ClassPanel character={character} />
-      </div>
-
-      <div>
-        <SkillPanel character={character} />
+        {panels.map((panel, key) => {
+          return <div key={key}>{panel}</div>;
+        })}
       </div>
     </div>
   );
