@@ -5,6 +5,7 @@ import AttributePanel from "./attribute-panel";
 import ClassPanel from "./class-panel";
 import SkillPanel from "./skill-panel";
 import { postUrl } from "../apis";
+import SkillCheckPanel from "./skill-check-panel";
 
 export default function CreateCharacterPanel({
   characterTemplate,
@@ -14,6 +15,8 @@ export default function CreateCharacterPanel({
   const [character, setCharacter] = useState<Attributes>(
     characterTemplate ?? DEFAULT_CHARACTER
   );
+
+  const [learntSkills, setLearntSkills] = useState<Object>({});
 
   const saveCharacter = useCallback(() => {
     fetch(postUrl, {
@@ -33,6 +36,9 @@ export default function CreateCharacterPanel({
 
   return (
     <div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <SkillCheckPanel character={character} learntSkills={learntSkills} />
+      </div>
       <div style={{ display: "flex", justifyContent: "space-evenly" }}>
         <div>
           <AttributePanel character={character} setCharacter={setCharacter} />
@@ -43,7 +49,11 @@ export default function CreateCharacterPanel({
         </div>
 
         <div>
-          <SkillPanel character={character} />
+          <SkillPanel
+            character={character}
+            learntSkills={learntSkills}
+            setLearntSkills={setLearntSkills}
+          />
         </div>
       </div>
       <button onClick={() => saveCharacter()}>Save Character</button>

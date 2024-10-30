@@ -1,12 +1,18 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Attributes } from "../types";
 import { SKILL_LIST } from "../consts";
 
 interface SkillPanelProps {
   character: Attributes;
+  learntSkills: Object;
+  setLearntSkills: React.Dispatch<React.SetStateAction<Object>>;
 }
 
-export default function SkillPanel({ character }: SkillPanelProps) {
+export default function SkillPanel({
+  character,
+  learntSkills,
+  setLearntSkills,
+}: SkillPanelProps) {
   const getModifier = useCallback(
     (attribute: string) => {
       return Math.floor((character[`${attribute}`] - 10) / 2);
@@ -16,7 +22,6 @@ export default function SkillPanel({ character }: SkillPanelProps) {
 
   let points = Math.max(10 + getModifier("Intelligence") * 4, 0);
 
-  const [learntSkills, setLearntSkills] = useState<Object>({});
   const skillsUsed = useMemo(
     () => Object.values(learntSkills).reduce((prev, cur) => prev + cur, 0),
     [learntSkills]
@@ -35,7 +40,7 @@ export default function SkillPanel({ character }: SkillPanelProps) {
         alert("Not enough skill points!");
       }
     },
-    [points, skillsUsed]
+    [points, setLearntSkills, skillsUsed]
   );
 
   const downSkill = useCallback(
@@ -51,7 +56,7 @@ export default function SkillPanel({ character }: SkillPanelProps) {
         alert("Cannot level down a unlearnt skill!");
       }
     },
-    [learntSkills, points]
+    [learntSkills, points, setLearntSkills]
   );
   const renderSkillList = useCallback(() => {
     return (
