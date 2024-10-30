@@ -14,7 +14,7 @@ export default function SkillPanel({ character }: SkillPanelProps) {
     [character]
   );
 
-  let points = 10 + getModifier("Intelligence") * 4;
+  let points = Math.max(10 + getModifier("Intelligence") * 4, 0);
 
   const [learntSkills, setLearntSkills] = useState<Object>({});
   const skillsUsed = useMemo(
